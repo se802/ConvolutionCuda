@@ -1,0 +1,1 @@
+/usr/bin/g++ CMakeFiles/hw4.dir/main.cu.o CMakeFiles/hw4.dir/cmake_device_link.o -o hw4  -lcudadevrt -lcudart_static -lrt -lpthread -ldl  -L"/usr/local/cuda/targets/x86_64-linux/lib/stubs" -L"/usr/local/cuda/targets/x86_64-linux/lib"
