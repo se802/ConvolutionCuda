@@ -7,101 +7,147 @@
 
 #include "image_types.h"
 
-int load_HEADER(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH, FILE *fp);
-void LIST(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH);
-int NEW_FILE_HEADER(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH,FILE *new_fp);
-//SINARTISI POY DIABAZI TO HEADER ENOS ARXEIOY 'BMP'.
-//DEXETE OS ORIZMATA TA DIO MERI TOY HEADER KAI TO ARXEIO.
-//EPISTREFI 0 GIA OMALI EKTELESI KAI 1 GIA PROBLIMATIKI.
-int load_HEADER(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH, FILE *fp) {
-    //BITMAP FILE HEADER
-    fread((void *) &(BFH->bfType1), sizeof(byte), 1, fp);
-    fread((void *) &(BFH->bfType2), sizeof(byte), 1, fp);
+int load_bmp_headers(BMP_FILE_HEADER *BFH, BMP_INFO_HEADER *BIH, FILE *fp);
+void print_header_info(BMP_FILE_HEADER *fileHeader, BMP_INFO_HEADER *infoHeader);
+int writeBmpInformation(BMP_FILE_HEADER *fileHeader, BMP_INFO_HEADER *infoHeader, FILE *file);
 
-    //EAN TO ARXIO DEN EINAI 'BMP' EPISTREFI 1-PROBLIMA.
-    if (BFH->bfType1 != 'B' || BFH->bfType2 != 'M')
+
+// Check that the file is a BMP file.
+bool fileNotBMP(BMP_FILE_HEADER *BFH){
+    if (BFH->fileType1 != 'B' || BFH->fileType2 != 'M')
+        return true;
+    return false;
+}
+
+void readBMPinformationHeader(BMP_FILE_HEADER *BFH, BMP_INFO_HEADER *BIH, FILE *fp){
+    // Load the BMP information header.
+    fread((void *) &(BFH->fileSize), sizeof(uint), 1, fp);
+    fread((void *) &(BFH->reserved1), sizeof(ushort), 1, fp);
+    fread((void *) &(BFH->reserved2), sizeof(ushort), 1, fp);
+    fread((void *) &(BFH->imageDataOffset), sizeof(uint), 1, fp);
+
+    fread((void *) &(BIH->headerSize), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->imageWidth), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->imageHeight), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->colorPlanes), sizeof(ushort), 1, fp);
+    fread((void *) &(BIH->bitsPerPixel), sizeof(ushort), 1, fp);
+}
+
+void readColorPixelInfo(BMP_FILE_HEADER *BFH, BMP_INFO_HEADER *BIH, FILE *fp){
+    fread((void *) &(BIH->imageSize), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->pixelsPerMeterWidth), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->pixelsPerMeterHeight), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->numColorsInPalette), sizeof(uint), 1, fp);
+    fread((void *) &(BIH->numImportantColors), sizeof(uint), 1, fp);
+}
+
+// Loads the BMP file header and information header from the given file.
+// Returns 0 if the file is loaded successfully, 1 otherwise.
+int load_bmp_headers(BMP_FILE_HEADER *BFH, BMP_INFO_HEADER *BIH, FILE *fp) {
+    // Load the BMP file header.
+    fread((void *) &(BFH->fileType1), sizeof(myByte), 1, fp);
+    fread((void *) &(BFH->fileType2), sizeof(myByte), 1, fp);
+
+    if (fileNotBMP(BFH))
+        return 1;
+
+    // Load the BMP information header.
+    readBMPinformationHeader(BFH,BIH,fp);
+
+    // Check that the image is 24-bit.
+    if (BIH->bitsPerPixel != 24)
+        return 1;
+
+    fread((void *) &(BIH->compressionType), sizeof(uint), 1, fp);
+
+    // Check that the image is not compressed.
+    if (BIH->compressionType != 0)
         return (1);
 
-    fread((void *) &(BFH->bfSize), sizeof(dword), 1, fp);
-    fread((void *) &(BFH->bfReserved1), sizeof(word), 1, fp);
-    fread((void *) &(BFH->bfReserved2), sizeof(word), 1, fp);
-    fread((void *) &(BFH->dfOffBits), sizeof(dword), 1, fp);
-    //BITMAP INFO HEADER.
-    fread((void *) &(BIH->biSize), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biWidth), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biHeight), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biPlanes), sizeof(word), 1, fp);
-    fread((void *) &(BIH->biBitCount), sizeof(word), 1, fp);
+    readColorPixelInfo(BFH,BIH,fp);
 
-    //EAN DEN EINAI ARXIO 24-bit EPISTREFI 1-PROBLIMA.
-    if (BIH->biBitCount != 24)
-        return (1);
-
-    fread((void *) &(BIH->biCompression), sizeof(dword), 1, fp);
-
-    //EAN EINAI SIMPIEZMENO ARXIO EPISTREFI 1-PROBLIMA.
-    if (BIH->biCompression != 0)
-        return (1);
-
-    fread((void *) &(BIH->biSizeImage), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biXPelsPerMeter), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biYPelsPerMeter), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biClrUsed), sizeof(dword), 1, fp);
-    fread((void *) &(BIH->biClrImportant), sizeof(dword), 1, fp);
-
-    //OTAN GINI KANONIKA H ANAGNOSI TOY ARXIOY EPISTREFI 0-KANONIKA.
-    return (0);
+    // Return 0 to indicate success.
+    return 0;
 }
 
 
-//DEXETE OS ORIZMATA TA DIO MERI TOY HEADER KAI TA EKTIPONI.
-void LIST(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH) {
-    printf("\nBITMAP_FILE_HEADER\n");
-    printf("==================\n");
-    printf("bfType: %c%c\n", BFH->bfType1, BFH->bfType2);
-    printf("bfSize: %d\n", BFH->bfSize);
-    printf("bfReserved1: %d\n", BFH->bfReserved1);
-    printf("bfReserved2: %d\n", BFH->bfReserved2);
-    printf("bfOffBits: %d\n", BFH->dfOffBits);
-    printf("\nBITMAP_INFO_HEADER\n");
-    printf("==================\n");
-    printf("biSize: %d\n", BIH->biSize);
-    printf("biWidth: %d\n", BIH->biWidth);
-    printf("biHeight: %d\n", BIH->biHeight);
-    printf("biPlanes: %d\n", BIH->biPlanes);
-    printf("biBitCount: %d\n", BIH->biBitCount);
-    printf("biCompression: %d\n", BIH->biCompression);
-    printf("biSizeImage: %d\n", BIH->biSizeImage);
-    printf("biXPelsPerMeter: %d\n", BIH->biXPelsPerMeter);
-    printf("biYPelsPerMeter: %d\n", BIH->biYPelsPerMeter);
-    printf("biClrUsed: %d\n", BIH->biClrUsed);
-    printf("biClrImportant: %d\n", BIH->biClrImportant);
+
+// Prints the BMP file header to the console.
+void print_file_header_info(BMP_FILE_HEADER* header) {
+    printf("\nBMP File Header\n");
+    printf("================\n");
+    printf("File Type: %c%c\n", header->fileType1, header->fileType2);
+    printf("File Size: %d\n", header->fileSize);
+    printf("Reserved 1: %d\n", header->reserved1);
+    printf("Reserved 2: %d\n", header->reserved2);
+    printf("Image Data Offset: %d\n", header->imageDataOffset);
+}
+
+// Prints the BMP information header to the console.
+void print_info_header_info(BMP_INFO_HEADER* header) {
+    printf("\nBMP Information Header\n");
+    printf("=======================\n");
+    printf("Header Size: %d\n", header->headerSize);
+    printf("Image Width: %d\n", header->imageWidth);
+    printf("Image Height: %d\n", header->imageHeight);
+    printf("Color Planes: %d\n", header->colorPlanes);
+    printf("Bits Per Pixel: %d\n", header->bitsPerPixel);
+    printf("Compression Type: %d\n", header->compressionType);
+    printf("Image Size: %d\n", header->imageSize);
+    printf("Pixels Per Meter Width: %d\n", header->pixelsPerMeterWidth);
+    printf("Pixels Per Meter Height: %d\n", header->pixelsPerMeterHeight);
+    printf("Number of Colors in Palette: %d\n", header->numColorsInPalette);
+    printf("Number of Important Colors: %d\n", header->numImportantColors);
     printf("\n***************************************************************************\n");
 }
 
 
-//SINARTISI POY DIMIOYRGA TO NEO FILE.
-int NEW_FILE_HEADER(BITMAP_FILE_HEADER *BFH, BITMAP_INFO_HEADER *BIH,FILE *new_fp) {
-
-    fwrite((void *) &(BFH->bfType1), sizeof(byte), 1, new_fp);
-    fwrite((void *) &(BFH->bfType2), sizeof(byte), 1, new_fp);
-    fwrite((void *) &(BFH->bfSize), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BFH->bfReserved1), sizeof(word), 1, new_fp);
-    fwrite((void *) &(BFH->bfReserved2), sizeof(word), 1, new_fp);
-    fwrite((void *) &(BFH->dfOffBits), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biSize), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biWidth), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biHeight), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biPlanes), sizeof(word), 1, new_fp);
-    fwrite((void *) &(BIH->biBitCount), sizeof(word), 1, new_fp);
-    fwrite((void *) &(BIH->biCompression), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biSizeImage), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biXPelsPerMeter), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biYPelsPerMeter), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biClrUsed), sizeof(dword), 1, new_fp);
-    fwrite((void *) &(BIH->biClrImportant), sizeof(dword), 1, new_fp);
-    return (0);
+// Prints the BMP file header and information header to the console.
+void print_header_info(BMP_FILE_HEADER* fileHeader, BMP_INFO_HEADER* infoHeader) {
+    print_file_header_info(fileHeader);
+    print_info_header_info(infoHeader);
 }
 
+
+
+
+// Writes the BMP file header to the given file.
+void writeBMPfileHeader(BMP_FILE_HEADER *fileHeader, FILE *file) {
+    fwrite((void *) &(fileHeader->fileType1), sizeof(myByte), 1, file);
+    fwrite((void *) &(fileHeader->fileType2), sizeof(myByte), 1, file);
+    fwrite((void *) &(fileHeader->fileSize), sizeof(uint), 1, file);
+    fwrite((void *) &(fileHeader->reserved1), sizeof(ushort), 1, file);
+    fwrite((void *) &(fileHeader->reserved2), sizeof(ushort), 1, file);
+    fwrite((void *) &(fileHeader->imageDataOffset), sizeof(uint), 1, file);
+}
+
+// Writes the BMP information header to the given file.
+void writeBMPinformationHeader(BMP_INFO_HEADER *infoHeader, FILE *file) {
+    fwrite((void *) &(infoHeader->headerSize), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->imageWidth), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->imageHeight), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->colorPlanes), sizeof(ushort), 1, file);
+    fwrite((void *) &(infoHeader->bitsPerPixel), sizeof(ushort), 1, file);
+    fwrite((void *) &(infoHeader->compressionType), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->imageSize), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->pixelsPerMeterWidth), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->pixelsPerMeterHeight), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->numColorsInPalette), sizeof(uint), 1, file);
+    fwrite((void *) &(infoHeader->numImportantColors), sizeof(uint), 1, file);
+}
+
+
+// Writes a new BMP file header and information header to the given file.
+// Returns 0 if the headers are written successfully, 1 otherwise.
+int writeBmpInformation(BMP_FILE_HEADER *fileHeader, BMP_INFO_HEADER *infoHeader, FILE *file) {
+    // Write the BMP file header.
+    writeBMPfileHeader(fileHeader, file);
+
+    // Write the BMP information header.
+    writeBMPinformationHeader(infoHeader, file);
+
+    // Return 0 to indicate success.
+    return 0;
+}
 
 #endif //HOMEWORK3_HANDLE_IMAGE_HEADER_H

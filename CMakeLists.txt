@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.19)
-SET(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
+cmake_minimum_required(VERSION 3.25)
 project(ConvolutionCuda CUDA)
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -g    -m64 -gencode arch=compute_50,code=sm_50 -Wno-deprecated-gpu-targets  ")
-set(CMAKE_CUDA_STANDARD 98)
+
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -g    -m64 -gencode arch=compute_50,code=sm_50 -Wno-deprecated-gpu-targets  -DDEBUG")
+
+set(CMAKE_CUDA_STANDARD 17)
 
 add_executable(hw4 main.cu)
 

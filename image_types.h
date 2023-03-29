@@ -7,16 +7,16 @@
 
 #include "stdio.h"
 
-typedef unsigned char byte;
-typedef unsigned int dword;
-typedef unsigned short int word;
+typedef unsigned char myByte;
+typedef unsigned int uint;
+typedef unsigned short int ushort;
 
-//DOMI DEDOMENO POY PERIEXEI TA TRIA XROMATA TON PIXEL.
+//Struct that has the 3 colors of the pixel
 typedef struct {
-    byte R;
-    byte G;
-    byte B;
-}__attribute__((packed)) tbyte;
+    myByte R;
+    myByte G;
+    myByte B;
+}__attribute__((packed)) pixel;
 
 
 typedef struct {
@@ -25,29 +25,32 @@ typedef struct {
     float factor;
 } kernel;
 
-//DOMI DEDOMENO POY PERIEXEI TA STOIXIA TOY BITMAP FILE HEADER.
-typedef struct {
-    byte bfType1;
-    byte bfType2;
-    dword bfSize;
-    word bfReserved1;
-    word bfReserved2;
-    dword dfOffBits;
-}__attribute__((packed)) BITMAP_FILE_HEADER;
 
-//DOMI DEDOMENO POY PERIEXEI TA STOIXIA TOY BITMAP INFO HEADER.
+
+
+
 typedef struct {
-    dword biSize;
-    dword biWidth;
-    dword biHeight;
-    word biPlanes;
-    word biBitCount;
-    dword biCompression;
-    dword biSizeImage;
-    dword biXPelsPerMeter;
-    dword biYPelsPerMeter;
-    dword biClrUsed;
-    dword biClrImportant;
-}__attribute__((packed)) BITMAP_INFO_HEADER;
+    myByte fileType1;         // The first byte of the file type.
+    myByte fileType2;         // The second byte of the file type.
+    uint fileSize;           // The total file size in bytes.
+    ushort reserved1;      // Reserved field (currently unused).
+    ushort reserved2;      // Reserved field (currently unused).
+    uint imageDataOffset;         // The offset to the beginning of the image data.
+} __attribute__((packed)) BMP_FILE_HEADER;
+
+// Struct that has the BMP_INFO_HEADER data
+typedef struct {
+    uint headerSize;           // The size of this header in bytes.
+    uint imageWidth;           // The width of the bitmap image in pixels.
+    uint imageHeight;          // The height of the bitmap image in pixels.
+    ushort colorPlanes;        // The number of color planes being used (usually 1).
+    ushort bitsPerPixel;       // The number of bits per pixel.
+    uint compressionType;      // The type of compression being used.
+    uint imageSize;            // The size of the image data in bytes.
+    uint pixelsPerMeterWidth;  // The horizontal resolution of the image in pixels per meter.
+    uint pixelsPerMeterHeight; // The vertical resolution of the image in pixels per meter.
+    uint numColorsInPalette;   // The number of colors in the color palette.
+    uint numImportantColors;   // The number of important colors used (0 means all colors are important).
+} __attribute__((packed)) BMP_INFO_HEADER;
 
 #endif //HOMEWORK3_IMAGE_TYPES_H
