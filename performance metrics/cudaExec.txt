@@ -1,0 +1,82 @@
+[ 33%] Linking CUDA executable hw4
+[100%] Built target hw4
+./hw4 1 lady.bmp 160 128
+0.22 Sec.
+./hw4 2 lady.bmp 160 128
+0.22 Sec.
+./hw4 3 lady.bmp 160 128
+0.22 Sec.
+./hw4 4 lady.bmp 160 128
+0.23 Sec.
+./hw4 5 lady.bmp 160 128
+0.24 Sec.
+./hw4 6 lady.bmp 160 128
+0.27 Sec.
+./hw4 7 lady.bmp 160 128
+0.27 Sec.
+./hw4 8 lady.bmp 160 128
+0.29 Sec.
+./hw4 9 lady.bmp 160 128
+0.31 Sec.
+./hw4 10 lady.bmp 160 128
+0.33 Sec.
+./hw4 1 animal_small.bmp 160 128
+0.40 Sec.
+./hw4 2 animal_small.bmp 160 128
+0.37 Sec.
+./hw4 3 animal_small.bmp 160 128
+0.38 Sec.
+./hw4 4 animal_small.bmp 160 128
+0.40 Sec.
+./hw4 5 animal_small.bmp 160 128
+0.42 Sec.
+./hw4 6 animal_small.bmp 160 128
+0.44 Sec.
+./hw4 7 animal_small.bmp 160 128
+0.46 Sec.
+./hw4 8 animal_small.bmp 160 128
+0.49 Sec.
+./hw4 9 animal_small.bmp 160 128
+0.53 Sec.
+./hw4 10 animal_small.bmp 160 128
+0.57 Sec.
+./hw4 1 animal.bmp 160 128
+7.74 Sec.
+./hw4 2 animal.bmp 160 128
+7.95 Sec.
+./hw4 3 animal.bmp 160 128
+8.28 Sec.
+./hw4 4 animal.bmp 160 128
+8.75 Sec.
+./hw4 5 animal.bmp 160 128
+9.29 Sec.
+./hw4 6 animal.bmp 160 128
+9.79 Sec.
+./hw4 7 animal.bmp 160 128
+10.20 Sec.
+./hw4 8 animal.bmp 160 128
+11.34 Sec.
+./hw4 9 animal.bmp 160 128
+11.99 Sec.
+./hw4 10 animal.bmp 160 128
+13.47 Sec.
+./hw4 1 BackgroundRadiationMap.bmp 160 128
+4.99 Sec.
+./hw4 2 BackgroundRadiationMap.bmp 160 128
+4.96 Sec.
+./hw4 3 BackgroundRadiationMap.bmp 160 128
+5.18 Sec.
+./hw4 4 BackgroundRadiationMap.bmp 160 128
+5.30 Sec.
+./hw4 5 BackgroundRadiationMap.bmp 160 128
+5.79 Sec.
+./hw4 6 BackgroundRadiationMap.bmp 160 128
+5.93 Sec.
+./hw4 7 BackgroundRadiationMap.bmp 160 128
+6.38 Sec.
+./hw4 8 BackgroundRadiationMap.bmp 160 128
+6.82 Sec.
+./hw4 9 BackgroundRadiationMap.bmp 160 128
+7.33 Sec.
+./hw4 10 BackgroundRadiationMap.bmp 160 128
+7.56 Sec.
