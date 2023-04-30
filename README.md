@@ -27,7 +27,7 @@ To use the project, follow these steps:
 
 ## Results
 
-Our experiments show that the CUDA implementation of the convolution algorithm can achieve significant speedups compared to the baseline implementation. For example, on a NVIDIA GeForce RTX 3080 GPU, we observed a speedup of up to 40x for large input sizes.
+Our experiments show that the CUDA implementation of the convolution algorithm can achieve significant speedups compared to the baseline implementation. For example, on a Nvidia Geforce GTX 1060, we observed a speedup of up to 35x for large input sizes.
 
 
 ## Conclusion
